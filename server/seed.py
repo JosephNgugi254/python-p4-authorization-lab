@@ -15,13 +15,10 @@ with app.app_context():
     Article.query.delete()
     User.query.delete()
 
-    fake = Faker()
-
     print("Creating users...")
     users = []
     usernames = []
     for i in range(25):
-
         username = fake.first_name()
         while username in usernames:
             username = fake.first_name()
@@ -39,13 +36,17 @@ with app.app_context():
         content = fake.paragraph(nb_sentences=8)
         preview = content[:25] + '...'
         
+        # Ensure at least 20% of articles are member-only
+        is_member_only = i < 20 or rc([True, False, False])
+        
         article = Article(
             author=fake.name(),
             title=fake.sentence(),
             content=content,
             preview=preview,
             minutes_to_read=randint(1,20),
-            is_member_only = rc([True, False, False])
+            is_member_only=is_member_only,
+            user_id=rc([user.id for user in users])  # Assign a random user
         )
 
         articles.append(article)

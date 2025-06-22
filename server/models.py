@@ -22,6 +22,9 @@ class Article(db.Model, SerializerMixin):
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
+    # Serialization rules
+    serialize_rules = ('-user.articles',)
+
     def __repr__(self):
         return f'Article {self.id} by {self.author}'
 
@@ -32,6 +35,9 @@ class User(db.Model, SerializerMixin):
     username = db.Column(db.String, unique=True)
 
     articles = db.relationship('Article', backref='user')
+
+    # Serialization rules
+    serialize_rules = ('-articles.user',)
 
     def __repr__(self):
         return f'User {self.username}, ID {self.id}'
